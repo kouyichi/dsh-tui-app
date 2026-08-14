@@ -66,13 +66,17 @@ test("input: ctrl+c while idle quits; while busy interrupts", () => {
   assert.equal(c2.quit, 0);
 });
 
-test("input: busy ignores bulk second line (race guard)", () => {
+test("input: busy allows typing, ctrl+c interrupts (submit gating moved to index)", () => {
   const { stdin, input, calls } = makeInput();
-  // Simulate: first submit sets busy mid-chunk; rest of chunk must be ignored.
   input.setBusy(true);
-  stdin.write("/quit\n");
-  assert.equal(calls.submit.length, 0);
+  stdin.write("abc");
+  assert.equal(input.buffer, "abc");
+  stdin.write("\u0003");
+  assert.equal(calls.interrupt, 1);
   assert.equal(calls.quit, 0);
+  // typing still lands while busy; enter submits (caller decides what to do)
+  stdin.write("\n");
+  assert.deepEqual(calls.submit, ["abc"]);
 });
 
 test("input: bracketed paste inserts whole content at cursor", () => {
