@@ -13,7 +13,8 @@ Claude Code 形态的交互式终端聊天 UI，带 DeepSeek 品牌鲸鱼 splash
 - ⌨️ 输入：多行（shift+enter）、中文 IME、vim 模式（esc）、`/` 命令补全、`@文件` 补全
 - 🎴 **Ctrl+O 三态折叠**：工具卡片 折叠 / 展开 / 隐藏
 - 📊 底部状态栏：模型 · git 分支 · 后台任务数 · 工作区
-- 🔁 会话管理：`/resume`（跨工作区）+ 自动标题 + `/sessions`
+- 🔁 会话管理：`/resume`（跨工作区）+ 自动标题 + `/sessions` + **多会话 tab**
+- 🌐 **A2A 派活**：`@hermes/@claude/@codex/@dsh 任务` → 结果卡片（一个终端指挥全家）
 - 🛡 无环境依赖：profile 自带 sandbox 覆盖（danger-full-access），本机无 bubblewrap 也能跑 bash
 - 📟 非 TTY 回退：管道 / CI 下自动降级为纯文本模式
 
@@ -85,12 +86,16 @@ dsh --profile tui --resume <sessionId>     # 续聊（带完整记忆）
 |---|---|
 | `/help` | 帮助 |
 | `/quit` `/exit` | 退出 |
-| `/model` | 切换模型（phase 2 完整选择器） |
-| `/resume` | 续聊指引（当前经启动参数 --resume） |
-| `/sessions` | 列出持久化会话 |
-| `/compact` | 压缩会话历史 |
-| `/jobs` | 列出后台任务 |
-| `/plan` `/goal` | 模式入口 |
+| `/config` | 状态栏统计开关（空格切换，持久化） |
+| `/mode` | Agent 模式：标准/PTC/极简/创造（新会话生效） |
+| `/model` | 模型选择器（列表 + 推理力度 e 切换） |
+| `/jobs` | 后台任务面板（空格日志 · k 停止） |
+| `/search <词>` | 会话全文搜索（FTS） |
+| `/trajectory` | 事件轨迹步进回放 |
+| `/feedback up|down [备注]` | 消息反馈（落盘 feedback.json） |
+| `/tab new \| /tab <n>` | 多会话 tab（PgUp/PgDn 循环切换） |
+| `/agents` | A2A 端点探测（hermes/claude/codex/dsh） |
+| `/resume` `/sessions` `/compact` `/plan` `/goal` | 会话/压缩/模式入口 |
 
 ### 快捷键
 
@@ -101,6 +106,7 @@ dsh --profile tui --resume <sessionId>     # 续聊（带完整记忆）
 | Esc | vim 模式开关（h/l/0/$/x/i/a） |
 | Tab | 补全：`/命令` / `@文件` |
 | Ctrl+O | 工具卡片折叠三态循环 |
+| PgUp/PgDn | 循环切换会话 tab |
 | Ctrl+C | 空闲=退出；回复中=中断当前轮 |
 | Ctrl+D | 空行退出 |
 
@@ -131,10 +137,7 @@ node --test test/input.test.js test/palette-events.test.js   # 单测（node 22 
 printf '你好\n/quit\n' | timeout 60 script -qec "dsh --profile tui" /dev/null  # 真机冒烟
 ```
 
-## 路线图（phase 2）
 
-模型选择浮层 · ask-user-question · jobs/subagent 面板 · plan/goal 可视化 ·
-会话全文搜索 · 轨迹回放 · A2A 派活（@hermes/@codex）· 鲸鱼喷水动画（token 联动）· 多会话 tab
 
 ## 许可
 
