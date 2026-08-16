@@ -2,12 +2,16 @@
   "name": "dsh-tui-app",
   "version": "0.1.0",
   "description": "The interactive terminal chat app for the dsh tui profile: a stdin loop driving one Agent through the dsh core registry",
-  "private": true,
   "type": "module",
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
     "./startup": "./lib/startup.js",
     "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   }
 }
