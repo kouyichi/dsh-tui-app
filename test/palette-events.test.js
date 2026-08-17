@@ -71,7 +71,10 @@ test("channel: turn/end error maps to error notice", () => {
   const agent = { ctx: { on: () => () => {} } };
   const ch = createChannel(agent, (e) => out.push(e));
   ch.onEvent({ type: "turn/end", data: { reason: { kind: "error", error: { code: "X", message: "y" } } } });
-  assert.deepEqual(out, [{ kind: "notice", tone: "error", text: "turn failed: X: y" }]);
+  assert.deepEqual(out, [
+    { kind: "turn-end" },
+    { kind: "notice", tone: "error", text: "turn failed: X: y" },
+  ]);
 });
 
 test("channel: detach returns the subscription teardown", () => {
