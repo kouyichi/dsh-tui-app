@@ -13,5 +13,8 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
+  },
+  "scripts": {
+    "test": "node test/unit.test.mjs"
   }
 }
