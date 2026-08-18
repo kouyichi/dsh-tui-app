@@ -16,6 +16,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { rankSlashItems, normalizeSlashSearchQuery } from "../lib/slash-fuzzy.js";
+import { linkDisplayText, terminalHyperlink } from "../lib/markdown.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const src = (rel) => readFileSync(join(ROOT, rel), "utf8");
@@ -75,5 +76,27 @@ const ok = (name) => { passed++; console.log(`  ✓ ${name}`); };
   ok("menu viewport windowing");
 }
 
-console.log(`\nunit tests: ${passed}/4 passed`);
-process.exit(passed === 4 ? 0 : 1);
+/* 5. Links always expose the complete raw HTTP(S) URL */
+{
+  const url = "https://github.com/login/device?source=dsh#authorize";
+  assert.equal(
+    linkDisplayText("Sign in to GitHub · GitHub", url),
+    `Sign in to GitHub · GitHub — ${url}`,
+    "labelled links must include the unabridged URL"
+  );
+  assert.equal(linkDisplayText(url, url), url, "bare URLs must not be duplicated");
+  assert.equal(
+    terminalHyperlink("open", url),
+    `\u001b]8;;${url}\u001b\\open\u001b]8;;\u001b\\`,
+    "http(s) links must carry an OSC 8 click target"
+  );
+  assert.equal(
+    terminalHyperlink("unsafe", "javascript:alert(1)"),
+    "unsafe",
+    "non-http protocols must never become terminal hyperlinks"
+  );
+  ok("links expose complete raw HTTP(S) URLs");
+}
+
+console.log(`\nunit tests: ${passed}/5 passed`);
+process.exit(passed === 5 ? 0 : 1);
